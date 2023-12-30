@@ -1,9 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  selectFilter,
-  selectContacts,
-} from '../../redux/contacts/contactsSlice';
+import { selectFilter, selectContacts } from '../../redux/contacts/selectors';
 import { fetchContacts } from '../../redux/contacts/operations';
 import {
   Text,
@@ -29,9 +26,7 @@ const ContactList = () => {
     ? contacts.filter(
         contact =>
           contact.name.toLowerCase().includes(filter.toLowerCase()) ||
-          contact.phone
-            .replace(/-|\s/g, '')
-            .includes(filter.replace(/-|\s/g, ''))
+          (contact.phone && contact.number.includes(filter))
       )
     : [];
 
@@ -44,13 +39,13 @@ const ContactList = () => {
       {isLoading ? (
         <Text>Loading...</Text>
       ) : (
-        <SimpleGrid columns={5} spacing={10} overflow="hidden">
+        <SimpleGrid columns={5} spacing={2} overflow="hidden" width="800px">
           {filteredContacts.length > 0 ? (
-            filteredContacts.map(({ id, name, phone }) => (
+            filteredContacts.map(({ id, name, number }) => (
               <Box
                 key={id}
-                borderWidth="1px"
-                borderRadius="lg"
+                borderWidth="4px"
+                borderRadius="1g"
                 overflow="hidden"
               >
                 <Box p="4">
@@ -59,7 +54,7 @@ const ContactList = () => {
                     onClick={() => handleDelete(id)}
                   />
                   <Text>{name}</Text>
-                  <Text>{phone}</Text>
+                  <Text>{number}</Text>
                 </Box>
               </Box>
             ))

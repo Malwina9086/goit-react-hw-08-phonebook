@@ -15,30 +15,18 @@ const ContactForm = () => {
     setFormData(prevData => ({ ...prevData, [name]: value }));
   };
 
-  const handleSubmit = e => {
-    e.preventDefault();
-    const { name, number } = formData;
+  const handleSubmit = evt => {
+    evt.preventDefault();
 
-    if (!contacts || !Array.isArray(contacts.list)) {
-      console.error('Error: contacts is not an array or is undefined');
+    const newContactExists = contacts.some(
+      contact => contact.name === formData.name
+    );
+    if (newContactExists) {
+      alert(`${formData.name} is in use. Try another name.`);
       return;
     }
 
-    if (
-      contacts.list.some(
-        contact => contact.name.toLowerCase() === name.toLowerCase()
-      )
-    ) {
-      alert('Contact with this name already exists!');
-      return;
-    }
-
-    const newContact = {
-      name,
-      phone: number,
-    };
-
-    dispatch(createContact(newContact));
+    dispatch(createContact(formData));
     setFormData({ name: '', number: '' });
   };
 
@@ -52,7 +40,7 @@ const ContactForm = () => {
           maxLength="30"
           pattern="(-)?\d{1,}|(-)?\d{1,}(\.)\d{1,}|(-)?\d{1,}(\s)(-)?\d{1,}|(-)?\d{1,}(\s)(-)?\d{1,}(\s)(-)?\d{1,}"
           title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-          placeholder="e.g. 123-456-789"
+          placeholder="e.g. 0123456789"
           required
           mb="4"
           value={formData.number}
